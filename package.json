@@ -12,6 +12,6 @@
     "build": "tsc"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Patrick Kuen <p.kuen@cloudacy.com>",
+  "license": "MIT"
 }
