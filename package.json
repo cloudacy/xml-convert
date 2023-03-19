@@ -2,16 +2,18 @@
   "name": "xml-convert",
   "version": "1.0.0",
   "type": "module",
+  "repository": "https://github.com/cloudacy/xml-convert.git",
   "description": "",
   "exports": {
     ".": {
       "import": "./build/main.js"
     }
   },
+  "main": "./build/main.js",
   "scripts": {
     "build": "tsc"
   },
-  "keywords": [],
+  "keywords": ["xml", "builder", "simple", "converter", "object"],
   "author": "Patrick Kuen <p.kuen@cloudacy.com>",
   "license": "MIT"
 }
