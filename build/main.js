@@ -1,5 +1,5 @@
-export function obj2xml(obj, pad, crlf = true) {
-    const eol = crlf ? '\r\n' : '\n';
+export function obj2xml(obj, pad, options) {
+    const eol = options?.crlf !== false ? '\r\n' : '\n';
     let xml = pad ? '' : '<?xml version="1.0" encoding="utf-8"?>' + eol;
     if (obj.tag) {
         // render tag-start
@@ -15,6 +15,7 @@ export function obj2xml(obj, pad, crlf = true) {
                         '"';
             }
         }
+        const endTag = `</${obj.tag}>`;
         // render children
         if (obj.children) {
             // render start-tag-close
@@ -24,7 +25,7 @@ export function obj2xml(obj, pad, crlf = true) {
                 xml += obj2xml(child, (pad || '') + '  ');
             }
             // render tag-close
-            xml += (pad || '') + '</' + obj.tag + '>' + eol;
+            xml += (pad || '') + endTag + eol;
         }
         else if (obj.text) {
             // render start-tag-close
@@ -32,11 +33,19 @@ export function obj2xml(obj, pad, crlf = true) {
             // render the text
             xml += obj.text;
             // render tag-close
-            xml += '</' + obj.tag + '>' + eol;
+            xml += endTag + eol;
         }
         else {
-            // render mono-tag-close
-            xml += '/>' + eol;
+            if (options?.selfClosingTags !== false) {
+                // render mono-tag-close
+                xml += '/>' + eol;
+            }
+            else {
+                // close start tag
+                xml += '>';
+                // add end tag
+                xml += endTag + eol;
+            }
         }
     }
     return xml;

@@ -6,4 +6,7 @@ export interface XMLObject {
     children?: Array<XMLObject>;
     text?: string;
 }
-export declare function obj2xml(obj: XMLObject, pad?: string, crlf?: boolean): string;
+export declare function obj2xml(obj: XMLObject, pad?: string, options?: {
+    selfClosingTags?: boolean;
+    crlf?: boolean;
+}): string;

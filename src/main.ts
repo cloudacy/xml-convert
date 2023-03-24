@@ -5,8 +5,12 @@ export interface XMLObject {
   text?: string
 }
 
-export function obj2xml(obj: XMLObject, pad?: string, crlf: boolean = true) {
-  const eol = crlf ? '\r\n' : '\n'
+export function obj2xml(
+  obj: XMLObject,
+  pad?: string,
+  options?: { selfClosingTags?: boolean; crlf?: boolean }
+) {
+  const eol = options?.crlf !== false ? '\r\n' : '\n'
   let xml = pad ? '' : '<?xml version="1.0" encoding="utf-8"?>' + eol
   if (obj.tag) {
     // render tag-start
@@ -24,6 +28,8 @@ export function obj2xml(obj: XMLObject, pad?: string, crlf: boolean = true) {
       }
     }
 
+    const endTag = `</${obj.tag}>`
+
     // render children
     if (obj.children) {
       // render start-tag-close
@@ -35,7 +41,7 @@ export function obj2xml(obj: XMLObject, pad?: string, crlf: boolean = true) {
       }
 
       // render tag-close
-      xml += (pad || '') + '</' + obj.tag + '>' + eol
+      xml += (pad || '') + endTag + eol
     } else if (obj.text) {
       // render start-tag-close
       xml += '>'
@@ -44,10 +50,18 @@ export function obj2xml(obj: XMLObject, pad?: string, crlf: boolean = true) {
       xml += obj.text
 
       // render tag-close
-      xml += '</' + obj.tag + '>' + eol
+      xml += endTag + eol
     } else {
-      // render mono-tag-close
-      xml += '/>' + eol
+      if (options?.selfClosingTags !== false) {
+        // render mono-tag-close
+        xml += '/>' + eol
+      } else {
+        // close start tag
+        xml += '>'
+
+        // add end tag
+        xml += endTag + eol
+      }
     }
   }
 
