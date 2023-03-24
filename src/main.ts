@@ -37,7 +37,7 @@ export function obj2xml(
 
       // render all children
       for (const child of obj.children) {
-        xml += obj2xml(child, (pad || '') + '  ')
+        xml += obj2xml(child, (pad || '') + '  ', options)
       }
 
       // render tag-close

@@ -22,7 +22,7 @@ export function obj2xml(obj, pad, options) {
             xml += '>' + eol;
             // render all children
             for (const child of obj.children) {
-                xml += obj2xml(child, (pad || '') + '  ');
+                xml += obj2xml(child, (pad || '') + '  ', options);
             }
             // render tag-close
             xml += (pad || '') + endTag + eol;
