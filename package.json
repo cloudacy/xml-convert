@@ -11,9 +11,21 @@
   },
   "main": "./build/main.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
-  "keywords": ["xml", "builder", "simple", "converter", "object"],
+  "keywords": [
+    "xml",
+    "builder",
+    "simple",
+    "converter",
+    "object"
+  ],
   "author": "Patrick Kuen <p.kuen@cloudacy.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.0",
+    "vitest": "^1.6.0"
+  }
 }
