@@ -1,69 +1,80 @@
 export interface XMLObject {
   tag: string
   attrs?: { [attr: string]: string | number }
-  children?: Array<XMLObject>
-  text?: string
+  content?: string | XMLObject[]
 }
 
-export function obj2xml(
+function _obj2xml(
   obj: XMLObject,
-  pad?: string,
-  options?: { selfClosingTags?: boolean; crlf?: boolean }
+  options: { eol: string; selfClosingTags?: boolean; padding?: string }
 ) {
-  const eol = options?.crlf !== false ? '\r\n' : '\n'
-  let xml = pad ? '' : '<?xml version="1.0" encoding="utf-8"?>' + eol
-  if (obj.tag) {
-    // render tag-start
-    xml += (pad || '') + '<' + obj.tag
+  if (!obj.tag) {
+    return ''
+  }
 
-    // render tag attributes
-    if (obj.attrs) {
-      for (const attr in obj.attrs) {
-        xml +=
-          ' ' +
-          attr +
-          '="' +
-          obj.attrs[attr].toString().replace(/"/g, '\\"') +
-          '"'
-      }
+  let xml = ''
+
+  // render tag-start
+  xml += (options?.padding || '') + '<' + obj.tag
+
+  // render tag attributes
+  if (obj.attrs) {
+    for (const attr in obj.attrs) {
+      const value = obj.attrs[attr].toString().replace(/"/g, '\\"')
+      xml += ` ${attr}="${value}"`
     }
+  }
 
-    const endTag = `</${obj.tag}>`
+  const endTag = `</${obj.tag}>`
 
-    // render children
-    if (obj.children) {
-      // render start-tag-close
-      xml += '>' + eol
-
-      // render all children
-      for (const child of obj.children) {
-        xml += obj2xml(child, (pad || '') + '  ', options)
-      }
-
-      // render tag-close
-      xml += (pad || '') + endTag + eol
-    } else if (obj.text) {
+  // render content
+  if (obj.content) {
+    if (typeof obj.content === 'string') {
       // render start-tag-close
       xml += '>'
 
       // render the text
-      xml += obj.text
+      xml += obj.content
 
       // render tag-close
-      xml += endTag + eol
+      xml += endTag + options.eol
     } else {
-      if (options?.selfClosingTags !== false) {
-        // render mono-tag-close
-        xml += '/>' + eol
-      } else {
-        // close start tag
-        xml += '>'
+      // render start-tag-close
+      xml += '>' + options.eol
 
-        // add end tag
-        xml += endTag + eol
+      // render all children
+      for (const child of obj.content) {
+        xml += _obj2xml(child, {
+          ...options,
+          padding: (options.padding ?? '') + '  ',
+        })
       }
+
+      // render tag-close
+      xml += (options?.padding || '') + endTag + options.eol
+    }
+  } else {
+    if (options?.selfClosingTags !== false) {
+      // render mono-tag-close
+      xml += '/>' + options.eol
+    } else {
+      // close start tag
+      xml += '>'
+
+      // add end tag
+      xml += endTag + options.eol
     }
   }
 
   return xml
+}
+
+export function obj2xml(
+  obj: XMLObject,
+  options?: { selfClosingTags?: boolean; crlf?: boolean }
+) {
+  const eol = options?.crlf !== false ? '\r\n' : '\n'
+  const xmlHeader = '<?xml version="1.0" encoding="utf-8"?>' + eol
+
+  return xmlHeader + _obj2xml(obj, { ...options, eol })
 }
