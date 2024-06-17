@@ -3,10 +3,9 @@ export interface XMLObject {
     attrs?: {
         [attr: string]: string | number;
     };
-    children?: Array<XMLObject>;
-    text?: string;
+    content?: string | XMLObject[];
 }
-export declare function obj2xml(obj: XMLObject, pad?: string, options?: {
+export declare function obj2xml(obj: XMLObject, options?: {
     selfClosingTags?: boolean;
     crlf?: boolean;
 }): string;
